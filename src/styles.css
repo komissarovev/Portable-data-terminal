@@ -1,0 +1,40 @@
+* { box-sizing: border-box; }
+
+body {
+    width : 100%;
+    height: 100%;
+    overscroll-behavior-y: contain;
+}
+
+.not-veiw {
+    display: none;
+}
+
+.btn-menu {
+    width: 400px;
+    height: 200px;
+}   
+
+.btn-back {
+    width: 200px;
+    height: 200px;
+}   
+
+.app {
+    margin-left: 15px;
+}
+
+#button_file {
+    font-size:44pt;
+}
+.label-file{
+    font-size:40pt;
+}
+.img-shablon{
+    width: 850px;
+}
+
+input{
+    font-size: 300% !important;
+}
+
