@@ -108,21 +108,21 @@ export class App {
         this.generatorIdSave++
         localStorage.setItem("generatorIdSave",this.generatorIdSave)
 
-        const lastIndex = this.scan.length-1
-        if ((this.scan.length && data.code===this.scan[lastIndex].barcode &&
-            this.scan[lastIndex].cell==this.currentCell && findName == '') || 
-            (this.scan.length && data.code===this.scan[lastIndex].barcode &&
-            this.scan[lastIndex].cell==this.currentCell && findName != '' &&
-            findName === this.scan[lastIndex].name)){
+        // const lastIndex = this.scan.length-1
+        // if ((this.scan.length && data.code===this.scan[lastIndex].barcode &&
+        //     this.scan[lastIndex].cell==this.currentCell && findName == '') || 
+        //     (this.scan.length && data.code===this.scan[lastIndex].barcode &&
+        //     this.scan[lastIndex].cell==this.currentCell && findName != '' &&
+        //     findName === this.scan[lastIndex].name)){
     
-            this.scan[lastIndex].id = this.generatorIdSave  
+        //     this.scan[lastIndex].id = this.generatorIdSave  
 
-            if (data?.qnt===undefined) {
-                this.scan[lastIndex].quantity += 1
-            } else {
-                this.scan[lastIndex].quantity = data.qnt*1
-            }
-        }else {
+        //     if (data?.qnt===undefined) {
+        //         this.scan[lastIndex].quantity += 1
+        //     } else {
+        //         this.scan[lastIndex].quantity = data.qnt*1
+        //     }
+        // }else {
             this.scan.push({
                 id : this.generatorIdSave,
                 barcode :data.code,
@@ -131,7 +131,7 @@ export class App {
                 quantity : 1,
                 cell : this.currentCell
             })
-        }
+        //}
 
         localStorage.setItem("scan",JSON.stringify(this.scan))
     }

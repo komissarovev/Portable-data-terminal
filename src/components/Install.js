@@ -15,7 +15,7 @@ export class Install extends Dom {
         </div> 
         
         <div class="form-group">
-            <H4>Версия TSD-KE: 1.0.20</H4> 
+            <H4>Версия TSD-KE: 1.0.24</H4> 
             <H4><a href="https://infostart.ru/public/1507241/">Статья по проекту на infostart.ru</a></H4>  
             <label class="label-file">Выберите csv или json файл</label>
             <input type="file" id="button_file" class="form-control-file button_file" name="file" accept="text/plain,.csv">

@@ -8,52 +8,9 @@ export class BarcodeScaner {
     initialize = () => {
         document.addEventListener('keypress', event => {
             let data = this.app.buffer
-            //console.log(event.keyCode)
-            if (event.key == 'Enter' || event.keyCode  == 10) { // barcode ends with enter -key
-                this.app.clearBuffer()
-            
-                if (this.app.currentDiv === 'quantity' && (isNaN(data.data2.qnt*1)|| data.data2.qnt.length>10)) {
-                    this.app.components.inventory_without_quantity.rendering(this.app)
-                    this.app.currentDiv = ''
-                    return
-                }else if (this.app.currentDiv === 'cell') {
-                    event.target.blur()
-                    this.app.currentDiv = ''
-                    return
-                }else if (this.app.currentDiv === 'shtrih') {
-                    data.data1.code = event.target.value 
-                    event.target.blur()
-                }
         
-                this.app.components.inventory_without_quantity.barcodeNode.value = ''
-        
-                let dataFull = data.data1.code
-                if (data.data1.code!=undefined && data.data1.code.length>25){
-                    data.data1.code = data.data1.code.substring(2,16) + data.data1.code.substring(18,31)
-                }
-                switch (this.app.active) {
-                    case 'info_prod': 
-                        this.app.components.info_prod.rendering(this.app,data.data1.code)
-                    break; 
-        
-                    case 'inventory_without_quantity':
-                        if (this.app.currentDiv=='' && !isNaN(data.data3.qnt*1) && data.data3.qnt>0) {
-                            this.app.chengeScan(data.data3)
-                            data.data1.code = data.data1.code.slice(data.data3.qnt.length) 
-                        }
-                        if (data.data2.qnt.length && data.data2.id.length) {
-                            //this.app.addScan(data.data2,dataFull)
-                            this.app.chengeScan(data.data2)
-                            data.data2.target.innerText = data.data2.target.innerText.replace(dataFull,'')
-                        }
-                        if (data.data1.code!=undefined && data.data1.code.length) {
-                            this.app.addScan(data.data1,dataFull)
-                        }     
-                        this.app.components.inventory_without_quantity.rendering(this.app)
-                    break;
-                }
-                this.app.currentDiv = ''
-            } else {
+            if (event.key !== 'Enter') { // barcode ends with enter -key
+                
                 const differenceTimeKeyPress = Date.now()-this.lastTimeKeyPress
                 this.lastTimeKeyPress = Date.now()
 
@@ -80,7 +37,6 @@ export class BarcodeScaner {
                     }   
                     
                     data.data1.code += event.key
-                    //data.data1.code += event.key + "(" + event.keyCode + ")"
                     this.app.buffer.data1.code = data.data1.code
                     this.lastDifferenceTimeKeyPress = differenceTimeKeyPress
                         //Оставить для отладки. Выводит штрих-код в инпут
@@ -91,72 +47,64 @@ export class BarcodeScaner {
                         // } 
                         
                 }
-            } 
+            } else {
+                
+                this.app.clearBuffer()
+            
+                if (this.app.currentDiv === 'quantity' && (isNaN(data.data2.qnt*1)|| data.data2.qnt.length>10)) {
+                    this.app.components.inventory_without_quantity.rendering(this.app)
+                    this.app.currentDiv = ''
+                    return
+                }else if (this.app.currentDiv === 'cell') {
+                    event.target.blur()
+                    this.app.currentDiv = ''
+                    return
+                }else if (this.app.currentDiv === 'shtrih') {
+                    data.data1.code = event.target.value 
+                    event.target.blur()
+                }
+        
+                this.app.components.inventory_without_quantity.barcodeNode.value = ''
+        
+                //Перенес ниже т.к. ниже отсекаю лишнее
+                // let dataFull = data.data1.code
+                // if (data.data1.code!=undefined && data.data1.code.length>25){
+                //     data.data1.code = data.data1.code.substring(2,16) + data.data1.code.substring(18,31)
+                // }
+                switch (this.app.active) {
+                    case 'info_prod': 
+                        if (data.data1.code!=undefined && data.data1.code.length>25){
+                            data.data1.code = data.data1.code.substring(2,16) + data.data1.code.substring(18,31)
+                        }
+                        this.app.components.info_prod.rendering(this.app,data.data1.code)
+                    break; 
+        
+                    case 'inventory_without_quantity':
+                        let addScan = false
+                        if (this.app.currentDiv=='' && !isNaN(data.data3.qnt*1) && data.data3.qnt>0) {
+                            this.app.chengeScan(data.data3)
+                            data.data1.code = data.data1.code.slice(data.data3.qnt.length) 
+                        }
+
+                        let dataFull = data.data1.code
+                        if (data.data1.code!=undefined && data.data1.code.length>25){
+                            data.data1.code = data.data1.code.substring(2,16) + data.data1.code.substring(18,31)
+                        }
+
+                        if (data.data2.qnt.length && data.data2.id.length) {
+                            //this.app.addScan(data.data2,dataFull)
+                            this.app.chengeScan(data.data2)
+                            data.data2.target.innerText = data.data2.target.innerText.replace(dataFull,'')
+                        }
+                        if (data.data1.code!=undefined && data.data1.code.length) {
+                            this.app.addScan(data.data1,dataFull)
+                            addScan = true
+                        }     
+                        this.app.components.inventory_without_quantity.rendering(this.app,addScan)
+                    break;
+                }
+                this.app.currentDiv = ''
+            }
         })
     }
 }
-
-
-// export class BarcodeScaner2 {
-//     constructor(app) {
-//         this.app = app
-//         this.timeoutHandler = 0
-//         this.inputString = ''
-//     }
-
-//     initialize = () => {
-//         document.addEventListener('keypress', this.keyup)
-//         if (this.timeoutHandler) {
-//             clearTimeout(this.timeoutHandler)
-//         }
-//         this.timeoutHandler = setTimeout(() => {
-//             this.inputString = ''
-//         }, 10)
-//     }
-
-//     close = () => {
-//         document.removeEventListener('keypress', this.keyup)
-//     }
-
-//     keyup = (e) => {
-//         if (this.timeoutHandler) {
-//             clearTimeout(this.timeoutHandler)
-//             this.inputString += String.fromCharCode(e.keyCode)
-//         }
-
-//         // if (!e.keyCode && this.app.active==='inventory_without_quantity' &&
-//         //     !this.app.wasInputScanner && this.app.currentDiv=='') {}
-//         // else {
-//         //     this.inputString = ''
-//         //     return
-//         // }
-//         if (this.app.wasInputScanner) {
-//             this.inputString = ''
-//             return
-//         }
-
-//         this.timeoutHandler = setTimeout(() => {
-//             if (this.inputString.length <= 3) {
-//                 this.inputString = ''
-//                 //app.scannerInput = false
-//                 return
-//             }
-
-//             // if (!this.app.wasInputScanner) {
-//             //     console.log(2)
-//             // }
-//             alert(1)
-//             this.app.wasInputScanner = true
-//             this.inputString = ''
-
-//             // document.dispatchEvent(new CustomEvent("barcodescaned", {
-//             //     detail: { barcode: this.inputString }
-//             // }));
-            
-//         }, 20)
-//     }
-// }
-
-// document.addEventListener("barcodescaned", function(event) {
-//     //alert(event.detail.barcode);
-// });

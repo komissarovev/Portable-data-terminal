@@ -98,15 +98,23 @@ export class Inventory_without_quantity extends Dom {
         this.barcodeNode = document.getElementById('inventory_without_quantity_barcodeNode')
     }
 
-    rendering(app){ 
+    rendering(app,scaning=false){ 
         let table = ''  
         let scan1 = app.scan.slice()
         sortDescById(scan1)
         scan1 = scan1.filter(el=>el.cell==app.currentCell)
-        for (let index in scan1) {
-            table += this.getStroka(scan1[index])
-        }
-        this.display.innerHTML = table
+        if (!scaning) { 
+            for (let index in scan1) {
+                table += this.getStroka(scan1[index])
+            }
+            this.display.innerHTML = table
+        } else {
+            table = this.getStroka(scan1[0])
+            this.display.insertAdjacentHTML('afterbegin', table);
+            if (scan1.length > 1) {
+                this.lastQntNode.value = scan1[1].quantity
+            }    
+        }    
         this.lastQntNode = document.querySelector('input.div-quantity')
     }
 
